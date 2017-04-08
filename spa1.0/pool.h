@@ -6,7 +6,8 @@
 
 
 typedef struct CpuNode
-{	struct CpuNode *next;
+{	struct ClusterStruct *parentcluster;
+	struct CpuNode *next;
 	int cpuid;
 }CpuNode;
 
@@ -22,7 +23,8 @@ typedef struct ClusterStruct
 }ClusterStruct;
 
 typedef struct PoolStruct
-{	struct PoolStruct *nextpool;
+{	struct Base *Root;
+	struct PoolStruct *nextpool;
 	ClusterStruct *HeadCluster;
 	ClusterStruct *TailCluster;
 	int poolid;
@@ -39,6 +41,7 @@ typedef struct Base
 typedef struct List
 {	CpuNode *HeadCpuNode;
 	CpuNode *TailCpuNode;
+
 }List;
 
 #endif

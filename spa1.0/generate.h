@@ -26,6 +26,7 @@ void CreateCpu(struct ClusterStruct *C,int id)
 {
 	struct CpuNode *n;
 	n= (struct CpuNode *)malloc(sizeof(struct CpuNode));
+	n->parentcluster=C;
 	n->cpuid = id;
 	n->next= NULL;
 	if (C->HeadCpuNode==NULL) 
@@ -64,6 +65,7 @@ void Createpool(struct Base *B,int id)
 	struct PoolStruct *p;						
 
      p= (struct PoolStruct *)malloc(sizeof(struct PoolStruct));
+     p->Root=B;
      p->poolid=id;
      p->application_count=0;	
      p->free_cores=FREE_CORES;

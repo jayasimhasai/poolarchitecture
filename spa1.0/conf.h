@@ -15,7 +15,7 @@
 //Defines number of hardware threads per core
 // system offers or the maximum number of cores depends on USE_CPUS and H_THREADS that you like to use.
 #ifndef H_THREADS
-#	define H_THREADS			2
+#	define H_THREADS			4
 #endif
 
 //Definition: POOL_COUNT
@@ -37,7 +37,7 @@
 //Define the policy implemented in the pools
 //supported policies SCATTER, COMPACT, EXPLICIT
 #ifndef POLICY
-#	define POLICY 				"SCATTER"
+#	define POLICY 				"COMPACT"
 #endif
 
 #endif

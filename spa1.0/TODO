@@ -1,0 +1,28 @@
+TODO
+
+REMOVED RANDOM*remove empty clusters from selection
+
+DONE*improve the List structure for moving across pools and clusters and checking policies and retreat back inefficient cores
+
+DONE*include pool and cluster details when cores are poped
+
+DONE*include lock for pool count 
+
+DONE*move back between pools
+
+*********if pools are full prompt it!!!
+
+DONE*checking clusters avalible core before entering
+
+***********setting configuration values
+
+**********************************
+retreat()
+
+lock()
+push back cores in respective pools
+unlock()
+
+impact()
+pop data and append in a string start if(mic) MICNATIVELODEX else setting cpus
+************************************

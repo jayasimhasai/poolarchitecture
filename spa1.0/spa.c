@@ -30,9 +30,11 @@ void test(){
 	while(temp!=NULL)
 	{
 		temp1=temp->HeadCluster;
+			printf("\n pool details freecpu's  %d application count %d lock status %d",temp->free_cores,temp->application_count,temp->update_lock);
 			while(temp1!=NULL)
 			{
 				temp2=temp1->HeadCpuNode;
+				printf("\n cluster details cpu_count %d lock status %d",temp1->cpu_count,temp1->locked);
 				while(temp2!=NULL)
 				{
 					printf("\n cpu %d in cluster %d and pool %d",temp2->cpuid,temp1->clusterid,temp->poolid);
@@ -48,6 +50,7 @@ void test(){
 inline static void Execute(void* Arg) {
     struct Application *app = (struct Application *) Arg;
     struct List Acq_cores;
+    struct CpuNode nodedetails;
     if (app->id == THREADS - 1)
         d1 = getTimeMillis();
     // Synchronization point
@@ -57,8 +60,10 @@ inline static void Execute(void* Arg) {
         exit(-1);
     }
     Invade(&Acq_cores,app->cores,&base);
-    for(int i=0;i<app->cores;i++)
-    	printf("\n application %s,%d coreacq %d",app->appname,app->cores,pop(&Acq_cores));
+    for(int i=0;i<app->cores;i++){
+    	nodedetails=pop(&Acq_cores);
+    	printf("\n application %s, required cores %d core details core id %d, cluster id %d, pool id %d",app->appname,app->cores,nodedetails.cpuid,nodedetails.parentcluster->clusterid,nodedetails.parentcluster->parentpool->poolid);
+    }
     //Impact();
     //Retreat();
 
@@ -82,7 +87,7 @@ int main(int argc, char **argv) {
 	THREADS=(argc-1)/2;
 	Setpools(&base);
 
-	test();
+	//test();
 
 	//Barrier initialization
 	if (pthread_barrier_init(&barr,NULL,THREADS))
@@ -104,6 +109,7 @@ int main(int argc, char **argv) {
     d2 = getTimeMillis();
 
     printf("\ntime: %d\t", (int) (d2 - d1));
+   // test();
 
 	return 0;
 }
