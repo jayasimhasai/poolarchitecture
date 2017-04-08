@@ -1,5 +1,5 @@
-#ifndef _INVADE_H_
-#define _INVADE_H_
+#ifndef _DISCOVER_H_
+#define _DISCOVER_H_
 
 #include <time.h>
 #include "pool.h"
@@ -106,7 +106,7 @@ inline static ClusterStruct *RandomCluster(int req_cores){
 }
 
 //starts invading cores
- void Invade(struct List *Acqcores,int req_cores,struct Base *B){
+ void Discover(struct List *Acqcores,int req_cores,struct Base *B){
  struct ClusterStruct *temp1;
  Root=B;
 	temp1=RandomCluster(req_cores);

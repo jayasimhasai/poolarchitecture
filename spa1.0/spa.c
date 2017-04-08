@@ -8,7 +8,7 @@
 #include "conf.h" 
 #include "pool.h"
 #include "generate.h"
-#include "invade.h"
+#include "discover.h"
 #include "primitives.h"
 
 #define MAX		50
@@ -59,13 +59,13 @@ inline static void Execute(void* Arg) {
         printf("Could not wait on barrier\n");
         exit(-1);
     }
-    Invade(&Acq_cores,app->cores,&base);
+    Discover(&Acq_cores,app->cores,&base);
     for(int i=0;i<app->cores;i++){
     	nodedetails=pop(&Acq_cores);
     	printf("\n application %s, required cores %d core details core id %d, cluster id %d, pool id %d",app->appname,app->cores,nodedetails.cpuid,nodedetails.parentcluster->clusterid,nodedetails.parentcluster->parentpool->poolid);
     }
-    //Impact();
-    //Retreat();
+    //Dispatch();
+    //Destroy();
 
 }
 
@@ -87,7 +87,7 @@ int main(int argc, char **argv) {
 	THREADS=(argc-1)/2;
 	Setpools(&base);
 
-	//test();
+	test();
 
 	//Barrier initialization
 	if (pthread_barrier_init(&barr,NULL,THREADS))
