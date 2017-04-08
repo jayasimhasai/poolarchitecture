@@ -9,6 +9,7 @@
 #include "pool.h"
 #include "generate.h"
 #include "invade.h"
+#include "primitives.h"
 
 #define MAX		50
 int d1,d2,THREADS;
@@ -19,7 +20,7 @@ pthread_barrier_t barr;
 struct Application
 {	char *appname;
 	int cores,id;	
-}app;
+};
 
 void test(){
 	struct PoolStruct *temp;
@@ -34,7 +35,7 @@ void test(){
 				temp2=temp1->HeadCpuNode;
 				while(temp2!=NULL)
 				{
-					printf("cpu %d in cluster %d and pool %d \n",temp2->cpuid,temp1->clusterid,temp->poolid);
+					printf("\n cpu %d in cluster %d and pool %d",temp2->cpuid,temp1->clusterid,temp->poolid);
 					temp2=temp2->next;
 				}
 				printf("\n");
@@ -45,8 +46,9 @@ void test(){
 	}
 }
 inline static void Execute(void* Arg) {
-    Application app = (Application) Arg;
-    if (app.id == THREADS - 1)
+    struct Application *app = (struct Application *) Arg;
+    struct List Acq_cores;
+    if (app->id == THREADS - 1)
         d1 = getTimeMillis();
     // Synchronization point
     int rc = pthread_barrier_wait(&barr);
@@ -54,24 +56,21 @@ inline static void Execute(void* Arg) {
         printf("Could not wait on barrier\n");
         exit(-1);
     }
-    Invade(app.cores);
-    Impact();
-    Retreat();
+    Invade(&Acq_cores,app->cores,&base);
+    for(int i=0;i<app->cores;i++)
+    	printf("\n application %s,%d coreacq %d",app->appname,app->cores,pop(&Acq_cores));
+    //Impact();
+    //Retreat();
 
 }
 
-inline static void* EntryPoint(void* Arg) {
-    Execute(Arg);
-    return NULL;
-}
-inline static pthread_t StartThread(Application app) {
-    void *Arg = (void*) app;
+inline static pthread_t StartThread(struct Application *app) {
+    void *Arg = (void *)app;
     pthread_t thread_p;
     int thread_id;
-
     pthread_attr_t my_attr;
     pthread_attr_init(&my_attr);
-    thread_id = pthread_create(&thread_p, &my_attr, EntryPoint, Arg);
+    thread_id = pthread_create(&thread_p, &my_attr, Execute, Arg);
 
     return thread_p;
 }
@@ -79,7 +78,8 @@ inline static pthread_t StartThread(Application app) {
 int main(int argc, char **argv) {
 	pthread_t threads[MAX];
 	int i,j;
-	THREADS=argc-1;
+	struct Application *app;
+	THREADS=(argc-1)/2;
 	Setpools(&base);
 
 	test();
@@ -92,9 +92,10 @@ int main(int argc, char **argv) {
 	}
 
 	for (i = 0,j=1; i < THREADS; i++,j++)
-		{  app.appname=argv[2*j-1];
-			app.cores=atoi(argv[2*j]);
-			app.id=i;
+		{  app = malloc(sizeof(struct Application));
+			app->appname=argv[2*j-1];
+			app->cores=atoi(argv[2*j]);
+			app->id=i;
         threads[i] = StartThread(app);
 	}
 
@@ -102,7 +103,7 @@ int main(int argc, char **argv) {
         pthread_join(threads[i], NULL);
     d2 = getTimeMillis();
 
-    printf("time: %d\t", (int) (d2 - d1));
+    printf("\ntime: %d\t", (int) (d2 - d1));
 
 	return 0;
 }

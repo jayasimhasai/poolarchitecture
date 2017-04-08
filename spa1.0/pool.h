@@ -11,7 +11,8 @@ typedef struct CpuNode
 }CpuNode;
 
 typedef struct ClusterStruct
-{	struct ClusterStruct *nextcluster;
+{	struct PoolStruct *parentpool;
+	struct ClusterStruct *nextcluster;
 	CpuNode *HeadCpuNode;
 	CpuNode *TailCpuNode;
 	int clusterid;
@@ -38,7 +39,6 @@ typedef struct Base
 typedef struct List
 {	CpuNode *HeadCpuNode;
 	CpuNode *TailCpuNode;
-	
-};
+}List;
 
 #endif

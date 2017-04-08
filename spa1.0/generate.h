@@ -42,6 +42,7 @@ void CreateCluster(struct PoolStruct *P,int Cid,int Pid)
 	struct ClusterStruct *c;
 	 int cpuid;
 	 c= (struct ClusterStruct *)malloc(sizeof(struct ClusterStruct));
+	 c->parentpool= P;
 	 c->clusterid=Cid;
 	 c->cpu_count=CPU_COUNT;
 	 c->locked= false;
