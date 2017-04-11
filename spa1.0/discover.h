@@ -55,11 +55,13 @@ void Unlock(struct ClusterStruct *temp){
 inline static ClusterStruct *TryLock(struct PoolStruct *temp,int req_cores){
 	struct ClusterStruct *temp1,*cluster;
 	int acqcluster=1,clusterid,cpucount=0;
-	int32_t locked=true;
+	int32_t locked=true,update_lock=true;
 	//clusterid=SimRand();
 	temp1=temp->HeadCluster;
 	if(temp->free_cores==0)
-	{
+	{   while(SWAP(&temp->update_lock,update_lock));
+		temp->application_count--;
+		temp->update_lock=false;
 		return NULL;
 	}
 	while(temp1!=NULL){
@@ -86,7 +88,7 @@ inline static ClusterStruct *TryLock(struct PoolStruct *temp,int req_cores){
 inline static ClusterStruct *RandomCluster(int req_cores){
 	struct PoolStruct *temp,*pool;
 	struct ClusterStruct *temp1;
-	int appcount=0,freecores=0,poolid;
+	int appcount=100,freecores=0,poolid;
 	int32_t update_lock=true;
 	temp=Root->Headpool;
 	while(SWAP(&temp->update_lock,update_lock));
@@ -102,20 +104,26 @@ inline static ClusterStruct *RandomCluster(int req_cores){
 	temp=Root->Headpool;
 	temp->update_lock=false;
 	temp1=TryLock(pool,req_cores);
+	if(temp1==NULL)
+	{
+		temp1=RandomCluster(req_cores);
+	}
 	return temp1;
 }
 
 //starts invading cores
  void Discover(struct List *Acqcores,int req_cores,struct Base *B){
  struct ClusterStruct *temp1;
+ int32_t update_lock=true;
  Root=B;
 	temp1=RandomCluster(req_cores);
 	for(int i=0;i<req_cores;i++)
 	{
 		if(temp1->HeadCpuNode!=NULL)
-		{	
+		{	while(SWAP(&temp1->parentpool->update_lock,update_lock));
 			temp1->cpu_count--;
 			temp1->parentpool->free_cores--;
+			temp1->parentpool->update_lock=false;
 			push(Acqcores,pop(temp1));
 		}
 		
@@ -131,7 +139,9 @@ inline static ClusterStruct *RandomCluster(int req_cores){
 	}
 		
 	Unlock(temp1);
+	while(SWAP(&temp1->parentpool->update_lock,update_lock));
 	temp1->parentpool->application_count--;
+	temp1->parentpool->update_lock=false;
 
 }
 

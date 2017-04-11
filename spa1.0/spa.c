@@ -9,11 +9,14 @@
 #include "pool.h"
 #include "generate.h"
 #include "discover.h"
+#include "destroy.h"
 #include "primitives.h"
 
 #define MAX		50
 int d1,d2,THREADS;
 struct Base base;
+clock_t start, end;
+double cpu_time_used;
 //Global Variables
 pthread_barrier_t barr;
 
@@ -47,12 +50,12 @@ void test(){
 			temp=temp->nextpool;
 	}
 }
-inline static void Execute(void* Arg) {
+inline static void *Execute(void* Arg) {
     struct Application *app = (struct Application *) Arg;
     struct List Acq_cores;
     struct CpuNode nodedetails;
     if (app->id == THREADS - 1)
-        d1 = getTimeMillis();
+        start = clock();
     // Synchronization point
     int rc = pthread_barrier_wait(&barr);
     if (rc != 0 && rc != PTHREAD_BARRIER_SERIAL_THREAD) {
@@ -60,12 +63,13 @@ inline static void Execute(void* Arg) {
         exit(-1);
     }
     Discover(&Acq_cores,app->cores,&base);
-    for(int i=0;i<app->cores;i++){
-    	nodedetails=pop(&Acq_cores);
-    	printf("\n application %s, required cores %d core details core id %d, cluster id %d, pool id %d",app->appname,app->cores,nodedetails.cpuid,nodedetails.parentcluster->clusterid,nodedetails.parentcluster->parentpool->poolid);
-    }
+
+    //for(int i=0;i<app->cores;i++){
+    	//nodedetails=pop(&Acq_cores);
+    	//printf("\n application %s, required cores %d core details core id %d, cluster id %d, pool id %d",app->appname,app->cores,nodedetails.cpuid,nodedetails.parentcluster->clusterid,nodedetails.parentcluster->parentpool->poolid);
+   // }
     //Dispatch();
-    //Destroy();
+    Destroy(&Acq_cores,app->cores);
 
 }
 
@@ -87,7 +91,7 @@ int main(int argc, char **argv) {
 	THREADS=(argc-1)/2;
 	Setpools(&base);
 
-	test();
+	//test();
 
 	//Barrier initialization
 	if (pthread_barrier_init(&barr,NULL,THREADS))
@@ -107,9 +111,11 @@ int main(int argc, char **argv) {
     for (i = 0; i < THREADS; i++)
         pthread_join(threads[i], NULL);
     d2 = getTimeMillis();
-
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("\nCPU_CYCLES: %d\t", cpu_time_used);
     printf("\ntime: %d\t", (int) (d2 - d1));
-   // test();
+   //test();
 
 	return 0;
 }
