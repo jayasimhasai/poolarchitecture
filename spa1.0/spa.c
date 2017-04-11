@@ -55,7 +55,10 @@ inline static void *Execute(void* Arg) {
     struct List Acq_cores;
     struct CpuNode nodedetails;
     if (app->id == THREADS - 1)
+    {
+    	d1 = getTimeMillis();
         start = clock();
+    }
     // Synchronization point
     int rc = pthread_barrier_wait(&barr);
     if (rc != 0 && rc != PTHREAD_BARRIER_SERIAL_THREAD) {
@@ -113,7 +116,7 @@ int main(int argc, char **argv) {
     d2 = getTimeMillis();
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("\nCPU_CYCLES: %d\t", cpu_time_used);
+    printf("\nCPU_CYCLES: %f\t", cpu_time_used);
     printf("\ntime: %d\t", (int) (d2 - d1));
    //test();
 
