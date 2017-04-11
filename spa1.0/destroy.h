@@ -4,8 +4,6 @@
 #include <time.h>
 #include "pool.h"
 #include "primitives.h"
-#include "discover.h"
-
 
 
 void Pushback(struct CpuNode node){
@@ -40,12 +38,26 @@ void Pushback(struct CpuNode node){
 		parentpool->update_lock=false;
 
 }
+inline static CpuNode Address(List *q){
+	struct CpuNode *temp,node;
+	if(q->HeadCpuNode!=NULL)
+	{
+		node.cpuid=q->HeadCpuNode->cpuid;
+		node.parentcluster=q->HeadCpuNode->parentcluster;
+		temp=q->HeadCpuNode;
+		q->HeadCpuNode=q->HeadCpuNode->next;
+		free(temp);
+
+	}
+	
+	return node;
+}
 
 void Destroy(struct List *Acqcores,int appcores){
 struct CpuNode node;
 	
 	for(int i=0;i<appcores;i++){
-		node=pop(Acqcores);
+		node=Address(Acqcores);
 		Pushback(node);
 	}
 }

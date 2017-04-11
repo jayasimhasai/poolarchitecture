@@ -15,14 +15,16 @@ int r = rand()%CLUSTER_COUNT;
 return r;
 }
 
-inline static void push(struct ClusterStruct *q,CpuNode n){
+inline static void push(List *q,CpuNode n){
 struct CpuNode *temp;						
-
      temp= (struct CpuNode *)malloc(sizeof(struct CpuNode));
      temp->cpuid=n.cpuid;
      temp->parentcluster=n.parentcluster;
      temp->next=NULL;
-     if (q->HeadCpuNode==NULL) q->HeadCpuNode=q->TailCpuNode=temp;
+     if (q->HeadCpuNode==NULL) {
+     	q->HeadCpuNode=temp;
+     	q->TailCpuNode=temp;
+     }
      else {
           q->TailCpuNode->next=temp;
           q->TailCpuNode=temp;
@@ -73,8 +75,7 @@ inline static ClusterStruct *TryLock(struct PoolStruct *temp,int req_cores){
 			temp1=temp1->nextcluster;
 		}
 
-	locked = (int32_t *)SWAP(&cluster->locked,locked);
-	if(locked)
+	if(SWAP(&cluster->locked,locked))
 		cluster=TryLock(temp,req_cores);
 	else
 		return cluster;
@@ -129,7 +130,7 @@ inline static ClusterStruct *RandomCluster(int req_cores){
 		
 		else{
 
-			Unlock(temp1);
+			temp1->locked=false;
 			temp1=TryLock(temp1->parentpool,req_cores-i);
 			if(temp1==NULL){
 				temp1=RandomCluster(req_cores-i);
@@ -138,7 +139,7 @@ inline static ClusterStruct *RandomCluster(int req_cores){
 		}
 	}
 		
-	Unlock(temp1);
+	temp1->locked=false;
 	while(SWAP(&temp1->parentpool->update_lock,update_lock));
 	temp1->parentpool->application_count--;
 	temp1->parentpool->update_lock=false;

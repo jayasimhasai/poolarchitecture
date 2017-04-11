@@ -52,7 +52,7 @@ void test(){
 }
 inline static void *Execute(void* Arg) {
     struct Application *app = (struct Application *) Arg;
-    struct List Acq_cores;
+    List Acq_cores={NULL,NULL};
     struct CpuNode nodedetails;
     if (app->id == THREADS - 1)
     {
