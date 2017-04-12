@@ -72,7 +72,7 @@ inline static void *Execute(void* Arg) {
     	//printf("\n application %s, required cores %d core details core id %d, cluster id %d, pool id %d",app->appname,app->cores,nodedetails.cpuid,nodedetails.parentcluster->clusterid,nodedetails.parentcluster->parentpool->poolid);
    // }
     //Dispatch();
-    Destroy(&Acq_cores,app->cores);
+    Destroy(&Acq_cores);
 
 }
 

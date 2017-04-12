@@ -4,6 +4,7 @@
 #include <time.h>
 #include "pool.h"
 #include "primitives.h"
+#include "destroy.h"
 
 //Root to the pools
 struct Base *Root;
@@ -31,7 +32,7 @@ struct CpuNode *temp;
 		}	
 }
 
-inline static CpuNode pop(struct ClusterStruct *q){
+inline static CpuNode pop(ClusterStruct *q){
 	struct CpuNode *temp,node;
 	if(q->HeadCpuNode!=NULL)
 	{
@@ -53,19 +54,20 @@ void Unlock(struct ClusterStruct *temp){
 	return;
 }
 
-//trylock clusters inside pool 
-inline static ClusterStruct *TryLock(struct PoolStruct *temp,int req_cores){
-	struct ClusterStruct *temp1,*cluster;
-	int acqcluster=1,clusterid,cpucount=0;
+//trylock clusters inside pool with max number of cores
+inline static ClusterStruct *TryLock(PoolStruct *pool,int req_cores){
+	struct ClusterStruct *temp1,*cluster=NULL;
+	int cpucount=0;
 	int32_t locked=true,update_lock=true;
-	//clusterid=SimRand();
-	temp1=temp->HeadCluster;
-	if(temp->free_cores==0)
-	{   while(SWAP(&temp->update_lock,update_lock));
-		temp->application_count--;
-		temp->update_lock=false;
+
+	temp1=pool->HeadCluster;
+	if(pool->free_cores==0)
+	{   while(SWAP(&pool->update_lock,update_lock));
+		pool->application_count--;
+		pool->update_lock=false;
 		return NULL;
 	}
+
 	while(temp1!=NULL){
 			if(temp1->cpu_count > cpucount)
 			{
@@ -75,8 +77,15 @@ inline static ClusterStruct *TryLock(struct PoolStruct *temp,int req_cores){
 			temp1=temp1->nextcluster;
 		}
 
-	if(SWAP(&cluster->locked,locked))
-		cluster=TryLock(temp,req_cores);
+	if(cluster==NULL)
+	{
+		return NULL;
+	}
+
+	if(SWAP(&cluster->locked,locked))		//trylock to other cluster
+	{
+		cluster=TryLock(pool,req_cores);
+	}
 	else
 		return cluster;
 	
@@ -87,13 +96,15 @@ inline static ClusterStruct *TryLock(struct PoolStruct *temp,int req_cores){
 //selects pool with less apps inside and select random cluster in that pool
 
 inline static ClusterStruct *RandomCluster(int req_cores){
-	struct PoolStruct *temp,*pool;
-	struct ClusterStruct *temp1;
-	int appcount=100,freecores=0,poolid;
+	struct PoolStruct *temp,*pool=NULL;
+	struct ClusterStruct *cluster;
+	int appcount=100;
 	int32_t update_lock=true;
+
 	temp=Root->Headpool;
-	while(SWAP(&temp->update_lock,update_lock));
-	while(temp!=NULL){
+	while(SWAP(&temp->update_lock,update_lock));	//waiting for pool to get update
+	while(temp!=NULL)
+	{
 		if(temp->application_count <=appcount && temp->free_cores>0)
 		{
 			appcount=temp->application_count;
@@ -101,49 +112,71 @@ inline static ClusterStruct *RandomCluster(int req_cores){
 		}
 		temp=temp->nextpool;
 	}
+
+	if(pool==NULL)
+	{	
+		temp=Root->Headpool;
+		temp->update_lock=false;
+		return NULL;
+	}
+
 	pool->application_count++;
 	temp=Root->Headpool;
-	temp->update_lock=false;
-	temp1=TryLock(pool,req_cores);
-	if(temp1==NULL)
+	temp->update_lock=false;	//release update lock for other applications
+
+	cluster=TryLock(pool,req_cores);
+	if(cluster==NULL)
 	{
-		temp1=RandomCluster(req_cores);
+		cluster=RandomCluster(req_cores);
 	}
-	return temp1;
+	return cluster;
 }
 
 //starts invading cores
- void Discover(struct List *Acqcores,int req_cores,struct Base *B){
- struct ClusterStruct *temp1;
+ void Discover(List *Acqcores,int req_cores,Base *B){
+ struct ClusterStruct *cluster;
  int32_t update_lock=true;
  Root=B;
-	temp1=RandomCluster(req_cores);
+
+	cluster=RandomCluster(req_cores);
+
+	if(cluster==NULL)
+	{
+		return;
+	}
+
 	for(int i=0;i<req_cores;i++)
 	{
-		if(temp1->HeadCpuNode!=NULL)
-		{	while(SWAP(&temp1->parentpool->update_lock,update_lock));
-			temp1->cpu_count--;
-			temp1->parentpool->free_cores--;
-			temp1->parentpool->update_lock=false;
-			push(Acqcores,pop(temp1));
+		if(cluster->HeadCpuNode!=NULL)
+		{	while(SWAP(&cluster->parentpool->update_lock,update_lock));
+			cluster->cpu_count--;
+			cluster->parentpool->free_cores--;
+			cluster->parentpool->update_lock=false;
+			push(Acqcores,pop(cluster));
 		}
 		
-		else{
+		else
+		{
 
-			temp1->locked=false;
-			temp1=TryLock(temp1->parentpool,req_cores-i);
-			if(temp1==NULL){
-				temp1=RandomCluster(req_cores-i);
+			cluster->locked=false;
+			cluster=TryLock(cluster->parentpool,req_cores-i);
+			if(cluster==NULL){
+				cluster=RandomCluster(req_cores-i);
+				if(cluster==NULL)
+				{
+					return;
+				}
 			}
 			i--;
 		}
 	}
 		
-	temp1->locked=false;
-	while(SWAP(&temp1->parentpool->update_lock,update_lock));
-	temp1->parentpool->application_count--;
-	temp1->parentpool->update_lock=false;
+	cluster->locked=false;
+	while(SWAP(&cluster->parentpool->update_lock,update_lock));
+	cluster->parentpool->application_count--;
+	cluster->parentpool->update_lock=false;
 
+	return;
 }
 
 

@@ -53,10 +53,10 @@ inline static CpuNode Address(List *q){
 	return node;
 }
 
-void Destroy(struct List *Acqcores,int appcores){
+void Destroy(struct List *Acqcores){
 struct CpuNode node;
 	
-	for(int i=0;i<appcores;i++){
+	while(Acqcores->HeadCpuNode!=NULL){
 		node=Address(Acqcores);
 		Pushback(node);
 	}
