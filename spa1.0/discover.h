@@ -133,7 +133,7 @@ inline static ClusterStruct *RandomCluster(int req_cores){
 }
 
 //starts invading cores
- void Discover(List *Acqcores,int req_cores,Base *B){
+ inline static void Discover(List *Acqcores,int req_cores,Base *B){
  struct ClusterStruct *cluster;
  int32_t update_lock=true;
  Root=B;
@@ -178,11 +178,5 @@ inline static ClusterStruct *RandomCluster(int req_cores){
 
 	return;
 }
-
-
-
-
-
-
 
 #endif
