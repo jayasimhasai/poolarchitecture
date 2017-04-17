@@ -51,6 +51,7 @@ void test(){
 			temp=temp->nextpool;
 	}
 }
+
 void Printmycores(List *Acqcores, char *appname){
 CpuNode *temp;
 temp=Acqcores->HeadCpuNode;
@@ -79,8 +80,8 @@ inline static void *Execute(void* Arg) {
     }
     Discover(&Acq_cores,app->cores,&base);
 
-    //Printmycores(&Acq_cores,app->appname);
-    Dispatch(&Acq_cores,app->appname);
+    Printmycores(&Acq_cores,app->appname);
+    //Dispatch(&Acq_cores,app->appname);
     Destroy(&Acq_cores);
 
 }
@@ -126,7 +127,7 @@ int main(int argc, char **argv) {
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
     printf("\nCPU_CYCLES: %f\t", cpu_time_used);
-    printf("\ntime: %d\t", (int) (d2 - d1));
+    printf("\ntime: %d\t\n", (int) (d2 - d1));
    //test();
 
 	return 0;
