@@ -10,6 +10,7 @@
 #include "generate.h"
 #include "discover.h"
 #include "destroy.h"
+#include "dispatch.h"
 #include "primitives.h"
 
 #define MAX		50
@@ -79,7 +80,7 @@ inline static void *Execute(void* Arg) {
     Discover(&Acq_cores,app->cores,&base);
 
     //Printmycores(&Acq_cores,app->appname);
-    //Dispatch();
+    Dispatch(&Acq_cores,app->appname);
     Destroy(&Acq_cores);
 
 }
