@@ -89,7 +89,7 @@ void Setpools(struct Base *base){
 	for(int i=0;i<POOL_COUNT;i++)
 	{
 		Createpool(base,i);
-		//printf("%d   %d 	%d 	%d 	%d ",USE_CPUS,POOL_COUNT,CLUSTER_COUNT,FREE_CORES,CPU_COUNT);
+		
 	}
 }
 
