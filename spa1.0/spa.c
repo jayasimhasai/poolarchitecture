@@ -80,7 +80,7 @@ inline static void *Execute(void* Arg) {
     }
     Discover(&Acq_cores,app->cores,&base);
 
-    //Printmycores(&Acq_cores,app->appname);
+    Printmycores(&Acq_cores,app->appname);
     Dispatch(&Acq_cores,app->appname);
     Destroy(&Acq_cores);
 
