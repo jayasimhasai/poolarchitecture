@@ -14,7 +14,8 @@
 #include "primitives.h"
 
 #define MAX		50
-int d1,d2,THREADS;
+int THREADS;
+double d1,d2;	
 struct Base base;
 clock_t start, end;
 double cpu_time_used;
@@ -81,7 +82,7 @@ inline static void *Execute(void* Arg) {
     Discover(&Acq_cores,app->cores,&base);
 
     Printmycores(&Acq_cores,app->appname);
-    Dispatch(&Acq_cores,app->appname);
+    //Dispatch(&Acq_cores,app->appname);
     Destroy(&Acq_cores);
 
 }

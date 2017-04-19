@@ -7,7 +7,7 @@ for i in 1 2
 				do 
 					sed -i '32d' conf.h
 				    sed -i '32i#	define CLUSTER_COUNT		'$j'' conf.h
-
+				    make
 					do
 						./spa a 24 b 24 c 24 d 24 e 24 f 24 g 24 h 24 i 24 j 24 >> output.txt
 						
@@ -25,7 +25,7 @@ for i in 3
 				do 
 					sed -i '32d' conf.h
 				    sed -i '32i#	define CLUSTER_COUNT		'$j'' conf.h
-
+				    make
 					do
 						./spa a 24 b 24 c 24 d 24 e 24 f 24 g 24 h 24 i 24 j 24 >> output.txt
 						
