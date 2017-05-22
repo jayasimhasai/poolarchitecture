@@ -3,7 +3,6 @@
 
 #include "pool.h"
 #include "conf.h"
-
 #define FREE_CORES		(USE_CPUS*H_THREADS/POOL_COUNT)
 #define CPU_COUNT 		(FREE_CORES/CLUSTER_COUNT)
 
@@ -84,6 +83,7 @@ void Createpool(struct Base *B,int id)
      }
 
 }
+
 void Setpools(struct Base *base){
 
 	for(int i=0;i<POOL_COUNT;i++)

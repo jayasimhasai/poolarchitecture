@@ -22,10 +22,7 @@ double cpu_time_used;
 //Global Variables
 pthread_barrier_t barr;
 
-struct Application
-{	char *appname;
-	int cores,id;	
-};
+
 
 void test(){
 	struct PoolStruct *temp;
@@ -79,7 +76,7 @@ inline static void *Execute(void* Arg) {
         printf("Could not wait on barrier\n");
         exit(-1);
     }
-    Discover(&Acq_cores,app->cores,&base);
+    Discover(&Acq_cores,app,&base);
 
     Printmycores(&Acq_cores,app->appname);
     //Dispatch(&Acq_cores,app->appname);
@@ -116,8 +113,9 @@ int main(int argc, char **argv) {
 
 	for (i = 0,j=1; i < THREADS; i++,j++)
 		{  app = malloc(sizeof(struct Application));
-			app->appname=argv[2*j-1];
-			app->cores=atoi(argv[2*j]);
+			app->appname=argv[3*j-2];
+			app->cores=atoi(argv[3*j-1]);
+			app->policy=(argv[3*j]);
 			app->id=i;
         threads[i] = StartThread(app);
 	}

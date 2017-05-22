@@ -22,14 +22,14 @@
 //-----------------------
 //Define the number of pools in the architecture
 #ifndef POOL_COUNT
-#	define POOL_COUNT			1
+#	define POOL_COUNT			3
 #endif
 
 //Definition: CLUSTER_COUNT
 //-------------------------
 //Define the number of clusters inside each pool
 #ifndef CLUSTER_COUNT
-#	define CLUSTER_COUNT		12
+#	define CLUSTER_COUNT		4
 #endif
 
 //Definition: POLICY

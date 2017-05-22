@@ -44,4 +44,14 @@ typedef struct List
 
 }List;
 
+typedef struct Application
+{	char *appname,*policy;
+	int cores,id;	
+}Application;
+
+typedef struct Node
+{	struct Node *next;
+	int nodeid;
+}Node;
+
 #endif

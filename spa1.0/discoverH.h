@@ -16,6 +16,88 @@ int r = rand()%CLUSTER_COUNT;
 return r;
 }
 
+int CheckHistory(int poolid, int clusterid, Base *History){
+
+if(History->Headpool==NULL){
+	return true;
+}
+else{
+	PoolStruct *pool;
+	pool=History->Headpool;
+	while(pool!=NULL){
+
+		if(pool->poolid==poolid){
+
+			if(clusterid!=9999){
+				if(pool->HeadCluster==NULL){
+				return true;
+				}
+				else{
+					ClusterStruct *cluster;
+					cluster=pool->HeadCluster;
+					while(cluster!=NULL){
+						if(cluster->clusterid==clusterid){
+							return false;
+						}
+						cluster=cluster->nextcluster;
+					}
+					return true;
+				} 
+			}
+			return false;
+		}
+
+		pool=pool->nextpool;
+	}
+}
+return true;
+}
+void RecordHistroy(int poolid, int clusterid, Base *History){
+	 
+	 if(clusterid==9999)
+	 {	struct PoolStruct *p;
+		 p= (struct PoolStruct *)malloc(sizeof(struct PoolStruct));
+	     p->poolid=poolid;
+	     p->nextpool= NULL;
+	     if (History->Headpool==NULL) {
+	     	History->Headpool=History->Tailpool=p;
+	     	return;
+	     }
+	     	
+
+	     else {
+	          History->Tailpool->nextpool=p;
+	          History->Tailpool=p;
+	          return;
+	     }
+ 	}
+ 	else{
+
+ 		PoolStruct *pool;
+ 		pool=History->Headpool;
+		while(pool!=NULL){
+		if(pool->poolid==poolid){
+			struct ClusterStruct *c;
+	        c= (struct ClusterStruct *)malloc(sizeof(struct ClusterStruct));
+	 		c->parentpool= pool;
+	 		c->clusterid=clusterid;
+			 if (pool->HeadCluster==NULL) {
+			 	pool->HeadCluster=pool->TailCluster=c;
+			 	return;
+			 }
+		     	
+
+		     else {
+		          pool->TailCluster->nextcluster=c;
+		          pool->TailCluster=c;
+		          return;
+		     }
+		}
+		pool = pool->nextpool;
+
+ 		}
+	}
+}
 inline static int policycheck(List *Acqcores,int cpuid,char *policy){
 CpuNode *temp;
 temp=Acqcores->TailCpuNode;
@@ -92,11 +174,11 @@ void Unlock(struct ClusterStruct *temp){
 }
 
 //trylock clusters inside pool with max number of cores
-inline static ClusterStruct *TryLock(PoolStruct *pool,int req_cores){
+inline static ClusterStruct *TryLock(PoolStruct *pool,int req_cores,Base *History){
 	struct ClusterStruct *temp1,*cluster=NULL;
 	int cpucount=0;
 	int32_t locked=true,update_lock=true;
-	
+	int check;
 
 	temp1=pool->HeadCluster;
 	if(pool->free_cores==0)
@@ -107,8 +189,8 @@ inline static ClusterStruct *TryLock(PoolStruct *pool,int req_cores){
 	}
 
 	while(temp1!=NULL){
-			
-			if(temp1->cpu_count > cpucount)
+			check=CheckHistory(pool->poolid,temp1->clusterid,History);
+			if(temp1->cpu_count > cpucount && check==true)
 			{
 				cpucount=temp1->cpu_count;
 				cluster=temp1;
@@ -123,9 +205,10 @@ inline static ClusterStruct *TryLock(PoolStruct *pool,int req_cores){
 	
 	if(SWAP(&cluster->locked,locked))		//trylock to other cluster
 	{
-		cluster=TryLock(pool,req_cores);
+		cluster=TryLock(pool,req_cores,History);
 	}
 	else{
+		RecordHistroy(pool->poolid,cluster->clusterid,History);
 		return cluster;
 	}
 	
@@ -135,18 +218,18 @@ inline static ClusterStruct *TryLock(PoolStruct *pool,int req_cores){
 
 //selects pool with less apps inside and select random cluster in that pool
 
-inline static ClusterStruct *RandomCluster(int req_cores,char *policy){
+inline static ClusterStruct *RandomCluster(int req_cores,char *policy,Base *History){
 	struct PoolStruct *temp,*pool=NULL;
 	struct ClusterStruct *cluster;
 	int appcount=100;
 	int32_t update_lock=true;
-	
+	int check=true;
 
 	temp=Root->Headpool;
 	while(SWAP(&temp->update_lock,update_lock));	//waiting for pool to get update
 	while(temp!=NULL)
-	{	
-		if(temp->application_count <=appcount && temp->free_cores>0)
+	{	check=CheckHistory(temp->poolid,9999,History);
+		if(temp->application_count <=appcount && temp->free_cores>0 && check==true)
 		{
 			appcount=temp->application_count;
 			pool=temp;
@@ -164,11 +247,12 @@ inline static ClusterStruct *RandomCluster(int req_cores,char *policy){
 	pool->application_count++;
 	temp=Root->Headpool;
 	temp->update_lock=false;	//release update lock for other applications
-	
-	cluster=TryLock(pool,req_cores);
+	RecordHistroy(pool->poolid,9999,History);
+
+	cluster=TryLock(pool,req_cores,History);
 	if(cluster==NULL)
 	{
-		cluster=RandomCluster(req_cores,policy);
+		cluster=RandomCluster(req_cores,policy,History);
 	}
 
 	return cluster;
@@ -181,8 +265,9 @@ inline static ClusterStruct *RandomCluster(int req_cores,char *policy){
  int32_t update_lock=true,pass;
  int count;
  Root=B;
+ Base History={NULL,NULL};
 
-	cluster=RandomCluster(app->cores,app->policy);
+	cluster=RandomCluster(app->cores,app->policy,&History);
 
 	if(cluster==NULL)
 	{
@@ -222,9 +307,9 @@ inline static ClusterStruct *RandomCluster(int req_cores,char *policy){
 		{
 
 			cluster->locked=false;
-			cluster=TryLock(cluster->parentpool,app->cores-i);
+			cluster=TryLock(cluster->parentpool,app->cores-i,&History);
 			if(cluster==NULL){
-				cluster=RandomCluster(app->cores-i,app->policy);
+				cluster=RandomCluster(app->cores-i,app->policy,&History);
 				if(cluster==NULL)
 				{
 					return;

@@ -1,0 +1,371 @@
+jayasim+ lu                            7
+jayasim+ lu                           20
+jayasim+ lu                           20
+jayasim+ lu                            9
+jayasim+ lu                           22
+jayasim+ lu                           11
+jayasim+ lu                            0
+jayasim+ lu                           19
+jayasim+ lu                            8
+jayasim+ lu                           21
+jayasim+ lu                           10
+ Time in seconds =                     8.94
+
+jayasim+ sp                            1
+jayasim+ sp                           19
+jayasim+ sp                           14
+jayasim+ sp                            3
+jayasim+ sp                            4
+jayasim+ sp                            5
+jayasim+ sp                            6
+jayasim+ sp                           13
+jayasim+ sp                            2
+jayasim+ sp                           15
+jayasim+ sp                           16
+Time in seconds =                    28.40
+
+1	2	3	4	5	6
+7	8	9	10	11	12	19	20	21	22	13	14	15	16
+
+
+jayasim+ lu                            7
+jayasim+ lu                           13
+jayasim+ lu                            8
+jayasim+ lu                           21
+jayasim+ lu                           10
+jayasim+ lu                           11
+jayasim+ lu                            0
+jayasim+ lu                           19
+jayasim+ lu                           20
+jayasim+ lu                            9
+jayasim+ lu                           22
+Time in seconds =                     8.80
+Time in seconds =                     8.63
+
+jayasim+ sp                            
+jayasim+ sp                           19
+jayasim+ sp                           14
+jayasim+ sp                           15
+jayasim+ sp                            4
+jayasim+ sp                            5
+jayasim+ sp                            6
+jayasim+ sp                           13
+jayasim+ sp                            2
+jayasim+ sp                            3
+jayasim+ sp                           16
+ Time in seconds =                    27.59
+Time in seconds =                    27.56
+
+1	2	3	4	5	6	13	14	15	16		
+7	8	9	10	11	12	19	20	21	22	
+
+###########################################DEFAULT###############################################
+jayasim+ ./lu                          6
+jayasim+ ./lu                         18
+jayasim+ ./lu                          3
+jayasim+ ./lu                          8
+jayasim+ ./lu                          1
+jayasim+ ./lu                         13
+jayasim+ ./lu                          9
+jayasim+ ./lu                          4
+jayasim+ ./lu                         15
+jayasim+ ./lu                          2
+jayasim+ ./lu                         10
+Time in seconds =                    12.14
+Time in seconds =                    10.88
+Time in seconds =                    10.01
+
+jayasim+ ./sp                          7
+jayasim+ ./sp                         13
+jayasim+ ./sp                         12
+jayasim+ ./sp                         19
+jayasim+ ./sp                         14
+jayasim+ ./sp                         23
+jayasim+ ./sp                          0
+jayasim+ ./sp                          5
+jayasim+ ./sp                         18
+jayasim+ ./sp                         11
+jayasim+ ./sp                         22
+ Time in seconds =                    38.60
+ Time in seconds =                    38.21
+Time in seconds =                    35.23
+
+
+
+
+
+jayasim+ ./lu                         23
+jayasim+ ./lu                          6
+jayasim+ ./lu                         10
+jayasim+ ./lu                         14
+jayasim+ ./lu                         18
+jayasim+ ./lu                         21
+jayasim+ ./lu                         12
+jayasim+ ./lu                         17
+jayasim+ ./lu                          6
+jayasim+ ./lu                          1
+jayasim+ ./lu                         20
+
+jayasim+ ./sp                         15
+jayasim+ ./sp                          1
+jayasim+ ./sp                          5
+jayasim+ ./sp                          2
+jayasim+ ./sp                         13
+jayasim+ ./sp                          4
+jayasim+ ./sp                         16
+jayasim+ ./sp                         19
+jayasim+ ./sp                          0
+jayasim+ ./sp                         14
+jayasim+ ./sp                          7
+
+jayasim+ ./lu                         20
+jayasim+ ./lu                         13
+jayasim+ ./lu                         23
+jayasim+ ./lu                         12
+jayasim+ ./lu                         13
+jayasim+ ./lu                          4
+jayasim+ ./lu                         16
+jayasim+ ./lu                         19
+jayasim+ ./lu                          5
+jayasim+ ./lu                          3
+jayasim+ ./lu                          2
+ Time in seconds =                    10.75
+
+jayasim+ ./sp                          6
+jayasim+ ./sp                          2
+jayasim+ ./sp                         17
+jayasim+ ./sp                         14
+jayasim+ ./sp                         11
+jayasim+ ./sp                          9
+jayasim+ ./sp                          1
+jayasim+ ./sp                         22
+jayasim+ ./sp                         21
+jayasim+ ./sp                          8
+jayasim+ ./sp                         10
+Time in seconds =                    37.46
+
+jayasim+ ./lu                         23
+jayasim+ ./lu                         18
+jayasim+ ./lu                         18
+jayasim+ ./lu                          0
+jayasim+ ./lu                         11
+jayasim+ ./lu                          5
+jayasim+ ./lu                          2
+jayasim+ ./lu                          7
+jayasim+ ./lu                         21
+jayasim+ ./lu                         17
+jayasim+ ./lu                         16
+Time in seconds =                    11.73
+
+jayasim+ ./sp                          6
+jayasim+ ./sp                          1
+jayasim+ ./sp                         15
+jayasim+ ./sp                          9
+jayasim+ ./sp                         10
+jayasim+ ./sp                          8
+jayasim+ ./sp                          3
+jayasim+ ./sp                         13
+jayasim+ ./sp                          4
+jayasim+ ./sp                         14
+jayasim+ ./sp                         22
+ Time in seconds =                    40.22
+
+ ****************************************************bt and sp ********************************************
+
+jayasim+ ./bt                          6
+jayasim+ ./bt                         13
+jayasim+ ./bt                          7
+jayasim+ ./bt                         22
+jayasim+ ./bt                         13
+jayasim+ ./bt                         14
+jayasim+ ./bt                          8
+jayasim+ ./bt                         10
+jayasim+ ./bt                         20
+jayasim+ ./bt                         12
+jayasim+ ./bt                         21
+Time in seconds =                    28.42
+
+jayasim+ ./sp                         23
+jayasim+ ./sp                         14
+jayasim+ ./sp                          1
+jayasim+ ./sp                          5
+jayasim+ ./sp                          4
+jayasim+ ./sp                          3
+jayasim+ ./sp                         18
+jayasim+ ./sp                         11
+jayasim+ ./sp                         15
+jayasim+ ./sp                          2
+jayasim+ ./sp                         17
+Time in seconds =                    45.45
+
+jayasim+ ./bt                         23
+jayasim+ ./bt                          6
+jayasim+ ./bt                         21
+jayasim+ ./bt                          6
+jayasim+ ./bt                         14
+jayasim+ ./bt                         12
+jayasim+ ./bt                         11
+jayasim+ ./bt                         22
+jayasim+ ./bt                         18
+jayasim+ ./bt                          8
+jayasim+ ./bt                          9
+Time in seconds =                    24.14
+
+jayasim+ ./sp                         15
+jayasim+ ./sp                          6
+jayasim+ ./sp                          0
+jayasim+ ./sp                          5
+jayasim+ ./sp                          4
+jayasim+ ./sp                          3
+jayasim+ ./sp                         19
+jayasim+ ./sp                          1
+jayasim+ ./sp                         13
+jayasim+ ./sp                          2
+jayasim+ ./sp                         10
+Time in seconds =                    36.58
+
+jayasim+ ./bt                         23
+jayasim+ ./bt                         18
+jayasim+ ./bt                         18
+jayasim+ ./bt                          5
+jayasim+ ./bt                         13
+jayasim+ ./bt                         16
+jayasim+ ./bt                          7
+jayasim+ ./bt                          0
+jayasim+ ./bt                         11
+jayasim+ ./bt                         15
+jayasim+ ./bt                          1
+Time in seconds =                    30.75
+
+jayasim+ ./sp                         19
+jayasim+ ./sp                         12
+jayasim+ ./sp                          4
+jayasim+ ./sp                          2
+jayasim+ ./sp                         23
+jayasim+ ./sp                         14
+jayasim+ ./sp                         10
+jayasim+ ./sp                          8
+jayasim+ ./sp                         21
+jayasim+ ./sp                          9
+jayasim+ ./sp                         22
+Time in seconds =                    49.29
+
+*********************************bt and sp using spa****************************
+
+jayasim+ bt                           18
+jayasim+ bt                           14
+jayasim+ bt                           19
+jayasim+ bt                           20
+jayasim+ bt                            9
+jayasim+ bt                           10
+jayasim+ bt                           11
+jayasim+ bt                            6
+jayasim+ bt                            7
+jayasim+ bt                            8
+jayasim+ bt                           21
+6	7	8	9	10	11	18	19	20	21
+ Time in seconds =                    21.39
+
+jayasim+ sp                            0
+jayasim+ sp                            2
+jayasim+ sp                            1
+jayasim+ sp                           14
+jayasim+ sp                            3
+jayasim+ sp                            4
+jayasim+ sp                            5
+jayasim+ sp                           12
+jayasim+ sp                           13
+jayasim+ sp                            2
+jayasim+ sp                           15
+0	1	2	3	4	5	12	13	14	15
+ Time in seconds =                    21.61
+
+ jayasim+ bt                           18
+jayasim+ bt                           19
+jayasim+ bt                           19
+jayasim+ bt                            8
+jayasim+ bt                            9
+jayasim+ bt                           10
+jayasim+ bt                           11
+jayasim+ bt                            6
+jayasim+ bt                            7
+jayasim+ bt                           20
+jayasim+ bt                           21
+6	7	8	9	10	11	18	19	20	21
+Time in seconds =                    21.18
+
+jayasim+ sp                            0
+jayasim+ sp                            8
+jayasim+ sp                           13
+jayasim+ sp                            2
+jayasim+ sp                            3
+jayasim+ sp                            4
+jayasim+ sp                            5
+jayasim+ sp                           12
+jayasim+ sp                            1
+jayasim+ sp                           14
+jayasim+ sp                           15
+0	1	2	3	4	5	12	13	14	15	
+Time in seconds =                    21.72
+
+
+
+***************bt cg lu mg sp ep****************************
+DEFAULT
+bt Time in seconds =                    31.07
+sp Time in seconds =                    22.64	
+lu Time in seconds =                    20.79
+ep Time in seconds =                     6.79
+mg Time in seconds =                     1.17
+cg Time in seconds =                     0.68
+
+bt Time in seconds =                    43.52
+sp Time in seconds =                    27.34
+lu Time in seconds =                    23.60
+ep Time in seconds =                     7.30
+mg Time in seconds =                     1.31
+cg Time in seconds =                     0.69
+
+*****************SPA bt cg lu mg sp ep****************************
+SPA
+bt Time in seconds =                    34.44
+sp Time in seconds =                    34.06
+lu Time in seconds =                    12.06
+ep Time in seconds =                     7.51
+mg Time in seconds =                     0.83
+cg Time in seconds =                     0.43
+
+printing cores for application lu
+18	19	20	21	
+printing cores for application bt
+12	13	14	15	
+printing cores for application mg
+10	11	22	23	
+printing cores for application ep
+0	1	2	3	
+printing cores for application cg
+6	7	8	9	
+printing cores for application sp
+4	5	16	17
+
+
+***better performance due bt and sp are in differnt node
+
+bt Time in seconds =                    27.82
+sp Time in seconds =                    29.82
+lu Time in seconds =                    14.55
+ep Time in seconds =                     6.58
+mg Time in seconds =                     0.84
+cg Time in seconds =                     0.51
+printing cores for application ep
+6	7	8	9
+printing cores for application bt
+18	19	20	21	
+printing cores for application cg
+0	1	2	3	
+printing cores for application sp
+4	5	16	17	
+printing cores for application mg
+10	11	22	23		
+printing cores for application lu
+12	13	14	15
