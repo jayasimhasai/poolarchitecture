@@ -99,7 +99,7 @@ int main(int argc, char **argv) {
 	pthread_t threads[MAX];
 	int i,j;
 	struct Application *app;
-	THREADS=(argc-1)/2;
+	THREADS=(argc-1)/3;
 	Setpools(&base);
 
 	//test();

@@ -1,6 +1,19 @@
 TODO
 
-
 ************************************
-policy control by application
+generate pools and clusters when tool starts	DONE
+************************************
+discover cores when application starts			DONE
+************************************
+destroy cores when application exits			DONE
+************************************
+dispatching all applications					DONE
+************************************
+policy control by application					DONE
+************************************
+history based directory							DONE
+************************************
+set conf at run time
+************************************
+cores compramisation (soft fit)
 ************************************

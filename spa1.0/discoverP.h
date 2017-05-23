@@ -16,104 +16,6 @@ int r = rand()%CLUSTER_COUNT;
 return r;
 }
 
-int CheckHistory(int poolid, int clusterid, Base *History){
-if(History->Headpool==NULL){
-	return true;
-}
-else{
-	PoolStruct *pool;
-	pool=History->Headpool;
-	while(pool!=NULL){
-
-		if(pool->poolid==poolid){
-
-			if(clusterid!=9999){
-				if(pool->HeadCluster==NULL){
-				return true;
-				}
-				else{
-					ClusterStruct *cluster;
-					cluster=pool->HeadCluster;
-					while(cluster!=NULL){
-						if(cluster->clusterid==clusterid){
-							return false;
-						}
-						cluster=cluster->nextcluster;
-					}
-					return true;
-				} 
-			}
-			return false;
-		}
-
-		pool=pool->nextpool;
-	}
-}
-return true;
-}
-void RecordHistroy(int poolid, int clusterid, Base *History){
-	 if(clusterid==9999)
-	 {	struct PoolStruct *p;
-		 p= (struct PoolStruct *)malloc(sizeof(struct PoolStruct));
-	     p->poolid=poolid;
-	     p->nextpool= NULL;
-	     if (History->Headpool==NULL) {
-	     	History->Headpool=History->Tailpool=p;
-	     	return;
-	     }
-	     	
-
-	     else {
-	          History->Tailpool->nextpool=p;
-	          History->Tailpool=p;
-	          return;
-	     }
- 	}
- 	else{
-
- 		PoolStruct *pool;
- 		pool=History->Headpool;
-		while(pool!=NULL){
-		if(pool->poolid==poolid){
-			struct ClusterStruct *c;
-	        c= (struct ClusterStruct *)malloc(sizeof(struct ClusterStruct));
-	 		c->parentpool= pool;
-	 		c->clusterid=clusterid;
-	 		c->nextcluster=NULL;
-			 if (pool->HeadCluster==NULL) {
-			 	pool->HeadCluster=pool->TailCluster=c;
-			 	return;
-			 }
-		     	
-
-		     else {
-		          pool->TailCluster->nextcluster=c;
-		          pool->TailCluster=c;
-		          return;
-		     }
-		}
-		pool = pool->nextpool;
-
- 		}
-	}
-}
-
-void DeleteHistory(Base *History){
-	PoolStruct *pool;
-	ClusterStruct *cluster;
-	while(History->Headpool!=NULL){
-		pool=History->Headpool;
-		while(pool->HeadCluster!=NULL){
-			cluster=pool->HeadCluster;
-			pool->HeadCluster=pool->HeadCluster->nextcluster;
-			free(cluster);
-		}
-		History->Headpool=History->Headpool->nextpool;
-		free(pool);
-	}
-	return;
-}
-
 inline static int policycheck(List *Acqcores,int cpuid,char *policy){
 CpuNode *temp;
 temp=Acqcores->TailCpuNode;
@@ -190,11 +92,12 @@ void Unlock(struct ClusterStruct *temp){
 }
 
 //trylock clusters inside pool with max number of cores
-inline static ClusterStruct *TryLock(PoolStruct *pool,int req_cores,Base *History){
+inline static ClusterStruct *TryLock(PoolStruct *pool,int req_cores){
 	struct ClusterStruct *temp1,*cluster=NULL;
 	int cpucount=0;
 	int32_t locked=true,update_lock=true;
-	int check;
+	
+
 	temp1=pool->HeadCluster;
 	if(pool->free_cores==0)
 	{   while(SWAP(&pool->update_lock,update_lock));
@@ -204,8 +107,8 @@ inline static ClusterStruct *TryLock(PoolStruct *pool,int req_cores,Base *Histor
 	}
 
 	while(temp1!=NULL){
-			check=CheckHistory(pool->poolid,temp1->clusterid,History);
-			if(temp1->cpu_count > cpucount && check==true)
+			
+			if(temp1->cpu_count > cpucount)
 			{
 				cpucount=temp1->cpu_count;
 				cluster=temp1;
@@ -220,10 +123,9 @@ inline static ClusterStruct *TryLock(PoolStruct *pool,int req_cores,Base *Histor
 	
 	if(SWAP(&cluster->locked,locked))		//trylock to other cluster
 	{
-		cluster=TryLock(pool,req_cores,History);
+		cluster=TryLock(pool,req_cores);
 	}
 	else{
-		RecordHistroy(pool->poolid,cluster->clusterid,History);
 		return cluster;
 	}
 	
@@ -233,53 +135,40 @@ inline static ClusterStruct *TryLock(PoolStruct *pool,int req_cores,Base *Histor
 
 //selects pool with less apps inside and select random cluster in that pool
 
-inline static ClusterStruct *RandomCluster(int req_cores,char *policy,Base *History){
+inline static ClusterStruct *RandomCluster(int req_cores,char *policy){
 	struct PoolStruct *temp,*pool=NULL;
 	struct ClusterStruct *cluster;
 	int appcount=100;
 	int32_t update_lock=true;
-	int check=true,Tcores=0;
+	
 
 	temp=Root->Headpool;
 	while(SWAP(&temp->update_lock,update_lock));	//waiting for pool to get update
 	while(temp!=NULL)
-	{	check=CheckHistory(temp->poolid,9999,History);
-		if(temp->application_count <=appcount && temp->free_cores>0 && check==true)
+	{	
+		if(temp->application_count <=appcount && temp->free_cores>0)
 		{
 			appcount=temp->application_count;
 			pool=temp;
 		}
-		Tcores=Tcores+temp->free_cores;
 		temp=temp->nextpool;
 	}
 
 	if(pool==NULL)
 	{	
-		if(Tcores!=0)
-		{	
-			temp=Root->Headpool;
-			temp->update_lock=false;
-			DeleteHistory(History);
-			cluster=RandomCluster(req_cores,policy,History);
-			return cluster;
-		}
-		else{
-			temp=Root->Headpool;
-			temp->update_lock=false;
-			return NULL;
-		}
-		
+		temp=Root->Headpool;
+		temp->update_lock=false;
+		return NULL;
 	}
 
 	pool->application_count++;
 	temp=Root->Headpool;
 	temp->update_lock=false;	//release update lock for other applications
-	RecordHistroy(pool->poolid,9999,History);
-
-	cluster=TryLock(pool,req_cores,History);
+	
+	cluster=TryLock(pool,req_cores);
 	if(cluster==NULL)
 	{
-		cluster=RandomCluster(req_cores,policy,History);
+		cluster=RandomCluster(req_cores,policy);
 	}
 
 	return cluster;
@@ -292,9 +181,8 @@ inline static ClusterStruct *RandomCluster(int req_cores,char *policy,Base *Hist
  int32_t update_lock=true,pass;
  int count;
  Root=B;
- Base History={NULL,NULL};
 
-	cluster=RandomCluster(app->cores,app->policy,&History);
+	cluster=RandomCluster(app->cores,app->policy);
 
 	if(cluster==NULL)
 	{
@@ -334,9 +222,9 @@ inline static ClusterStruct *RandomCluster(int req_cores,char *policy,Base *Hist
 		{
 
 			cluster->locked=false;
-			cluster=TryLock(cluster->parentpool,app->cores-i,&History);
+			cluster=TryLock(cluster->parentpool,app->cores-i);
 			if(cluster==NULL){
-				cluster=RandomCluster(app->cores-i,app->policy,&History);
+				cluster=RandomCluster(app->cores-i,app->policy);
 				if(cluster==NULL)
 				{
 					return;
