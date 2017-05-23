@@ -1,19 +1,30 @@
 TODO
 
 ************************************
-generate pools and clusters when tool starts	DONE
+generate pools and clusters when tool 
+starts	                                        DONE
 ************************************
-discover cores when application starts			DONE
+discover cores when application 
+starts			                                DONE
 ************************************
 destroy cores when application exits			DONE
 ************************************
-dispatching all applications					DONE
+dispatching all applications with
+acquired cores                  				DONE
 ************************************
-policy control by application					DONE
+policy control by application using 
+policy check function           				DONE
 ************************************
-history based directory							DONE
+history based directory	to utilize
+cores from all cluster and pools
+in case of scatter policy       				DONE
 ************************************
-set conf at run time
+set configurations at run time                  XXXX
 ************************************
-cores compramisation (soft fit)
+cores compromisation (soft fit)	
+by adding delete history(when there
+are no pools left but still app 
+requires cores in scatter policy)        		DONE
+************************************
+maintain Defragmentation						XXXX
 ************************************
